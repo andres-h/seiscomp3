@@ -178,7 +178,6 @@ class MNAmplitude : public Seiscomp::Processing::AmplitudeProcessor {
 		double          _Vmin, _Vmax;
 		double          _snrWindowSeconds;
 		double          _noiseWindowPreSeconds;
-		PhaseOrVelocity _noiseEndPriorities[EPhaseOrVelocityQuantity];
 		PhaseOrVelocity _signalStartPriorities[EPhaseOrVelocityQuantity];
 		PhaseOrVelocity _signalEndPriorities[EPhaseOrVelocityQuantity];
 };

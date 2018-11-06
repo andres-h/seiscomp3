@@ -130,11 +130,6 @@ void MNAmplitude::setDefaults() {
 	_Vmin = DEFAULT_VMIN;
 	_Vmax = DEFAULT_VMAX;
 
-	_noiseEndPriorities[0] = PoV_Pg;
-	_noiseEndPriorities[1] = PoV_Pn;
-	_noiseEndPriorities[2] = PoV_P;
-	_noiseEndPriorities[3] = PoV_Undefined;
-
 	_signalStartPriorities[0] = PoV_Lg;
 	_signalStartPriorities[1] = PoV_Sg;
 	_signalStartPriorities[2] = PoV_Sn;
@@ -273,9 +268,6 @@ bool MNAmplitude::setup(const Settings &settings) {
 	catch ( ... ) {}
 
 	// Read priorities
-	if ( !readPriorities(_noiseEndPriorities, settings, "amplitudes.MN.noiseEndPriorities") )
-		return false;
-
 	if ( !readPriorities(_signalStartPriorities, settings, "amplitudes.MN.signalStartPriorities") )
 		return false;
 
