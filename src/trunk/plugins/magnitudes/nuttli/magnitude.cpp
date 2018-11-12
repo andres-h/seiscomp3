@@ -76,11 +76,15 @@ MNMagnitude::computeMagnitude(double amplitude,
 	// forward the magnitude for association with weight 0.
 	_validValue = false;
 
-	if ( period <= 0.01 || period >= 1.3 )
-		return PeriodOutOfRange;
+	if ( period <= 0.01 || period >= 1.3 ) {
+		status = PeriodOutOfRange;
+		_validValue = true;
+	}
 
-	if ( snr <= 2 )
-		return SNROutOfRange;
+	if ( snr <= 2 ) {
+		status = SNROutOfRange;
+		_validValue = true;
+	}
 
 	// Both objects are required to make sure that they both lie inside the
 	// configured region.
