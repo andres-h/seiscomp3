@@ -409,7 +409,8 @@ class TestApp : public Client::Application {
 				if ( status != Processing::MagnitudeProcessor::OK ) {
 					SEISCOMP_WARNING("%s: magnitude status = %s",
 					                 sid.c_str(), status.toString());
-					continue;
+					if ( !magProc->treatAsValidMagnitude() )
+						continue;
 				}
 
 				IDMap::iterator idit = fromNewToOldAmplitude.find(amp->publicID());
