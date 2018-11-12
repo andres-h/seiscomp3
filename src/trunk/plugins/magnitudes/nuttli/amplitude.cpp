@@ -107,14 +107,14 @@ MNAmplitude::MNAmplitude(): AmplitudeProcessor(AMP_TYPE) {
 	setUnit("m/s");
 	setDefaults();
 
-	setMinSNR(2);
+	setMinSNR(0);
 
 	// Full depth range
 	setMinDepth(-100);
 	setMaxDepth(1000);
 
-	// Distance range is 0.5 to 30 degrees
-	setMinDist(0.5);
+	// Distance range is 0 to 30 degrees
+	setMinDist(0);
 	setMaxDist(30);
 }
 // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
