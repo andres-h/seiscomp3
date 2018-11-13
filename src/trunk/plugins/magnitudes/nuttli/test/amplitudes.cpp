@@ -406,11 +406,15 @@ class TestApp : public Client::Application {
 					                          -1, -1, // Not required
 					                          env.hypocenter, env.receiver, amp, mag);
 
+				bool passedQC = true;
+
 				if ( status != Processing::MagnitudeProcessor::OK ) {
 					SEISCOMP_WARNING("%s: magnitude status = %s",
 					                 sid.c_str(), status.toString());
 					if ( !magProc->treatAsValidMagnitude() )
 						continue;
+
+					passedQC = false;
 				}
 
 				IDMap::iterator idit = fromNewToOldAmplitude.find(amp->publicID());
@@ -435,6 +439,7 @@ class TestApp : public Client::Application {
 				ci.setCreationTime(now);
 				stamag->setCreationInfo(ci);
 
+				stamag->setPassedQC(passedQC);
 				stamag->setType(magProc->type());
 				stamag->setWaveformID(amp->waveformID());
 				stamag->setAmplitudeID(amp->publicID());

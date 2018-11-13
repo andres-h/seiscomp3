@@ -282,9 +282,10 @@ bool MNAmplitude::setup(const Settings &settings) {
 
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-OPT(double) MNAmplitude::getMinimumOnset(const PhaseOrVelocity *priorities,
+OPT(double) MNAmplitude::getDefinedOnset(const PhaseOrVelocity *priorities,
                                          double lat0, double lon0, double depth,
-                                         double lat1, double lon1, double dist) const {
+                                         double lat1, double lon1, double dist,
+                                         bool left) const {
 	// Compute window start
 	// First take the manually picked arrivals
 	// Then Vmax
@@ -344,6 +345,16 @@ OPT(double) MNAmplitude::getMinimumOnset(const PhaseOrVelocity *priorities,
 
 					// Phase and location matches, use it
 					double onset = pick->time().value() - _environment.hypocenter->time().value();
+					double scale = left ? -1.0 : 1.0;
+					try {
+						onset += scale * pick->time().lowerUncertainty();
+					}
+					catch ( ... ) {
+						try {
+							onset += scale * pick->time().uncertainty();
+						}
+						catch ( ... ) {}
+					}
 
 					SEISCOMP_DEBUG("%s.%s.%s: arrival '%s' accepted, onset = %f",
 					               _networkCode.c_str(), _stationCode.c_str(), _locationCode.c_str(),
@@ -355,12 +366,28 @@ OPT(double) MNAmplitude::getMinimumOnset(const PhaseOrVelocity *priorities,
 				break;
 			}
 			case PoV_Vmin:
-				if ( _Vmin > 0 )
-					return Math::Geo::deg2km(dist) / _Vmin;
+				if ( _Vmin > 0 ) {
+					double scale = left ? -1.0 : 1.0;
+					double hypoDist = Math::Geo::deg2km(dist);
+					hypoDist = sqrt(hypoDist*hypoDist + depth*depth);
+					double onset = hypoDist / _Vmin + scale * (1 + 0.05*hypoDist/((_Vmin+_Vmax)*0.5));
+					SEISCOMP_DEBUG("%s.%s.%s: vmin = %f",
+					               _networkCode.c_str(), _stationCode.c_str(), _locationCode.c_str(),
+					               onset);
+					return onset;
+				}
 				break;
 			case PoV_Vmax:
-				if ( _Vmax > 0 )
-					return Math::Geo::deg2km(dist) / _Vmax;
+				if ( _Vmax > 0 ) {
+					double scale = left ? -1.0 : 1.0;
+					double hypoDist = Math::Geo::deg2km(dist);
+					hypoDist = sqrt(hypoDist*hypoDist + depth*depth);
+					double onset = hypoDist / _Vmax + scale * (1 + 0.05*hypoDist/((_Vmin+_Vmax)*0.5));
+					SEISCOMP_DEBUG("%s.%s.%s: vmax = %f",
+					               _networkCode.c_str(), _stationCode.c_str(), _locationCode.c_str(),
+					               onset);
+					return onset;
+				}
 				break;
 			default:
 				break;
@@ -532,12 +559,12 @@ void MNAmplitude::setEnvironment(const Seiscomp::DataModel::Origin *hypocenter,
 
 	OPT(double) noiseWindowEnd    = getEarliestOnset(hypoLat, hypoLon, hypoDepth,
 	                                                 recvLat, recvLon, dist);
-	OPT(double) signalWindowStart = getMinimumOnset(_signalStartPriorities,
+	OPT(double) signalWindowStart = getDefinedOnset(_signalStartPriorities,
 	                                                hypoLat, hypoLon, hypoDepth,
-	                                                recvLat, recvLon, dist);
-	OPT(double) signalWindowEnd   = getMinimumOnset(_signalEndPriorities,
+	                                                recvLat, recvLon, dist, true);
+	OPT(double) signalWindowEnd   = getDefinedOnset(_signalEndPriorities,
 	                                                hypoLat, hypoLon, hypoDepth,
-	                                                recvLat, recvLon, dist);
+	                                                recvLat, recvLon, dist, false);
 
 	if ( !noiseWindowEnd || !signalWindowStart || !signalWindowEnd ) {
 		// Use error code 1 as time window computation error
