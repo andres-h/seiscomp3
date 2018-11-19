@@ -86,7 +86,7 @@
 						<description>
 						The path to the BNA file which defines the valid region
 						for the MN magnitude. Note that the entire path from
-						source to receiver must ly entirely within the polygon(s).
+						source to receiver must lie entirely within the polygon(s).
 						</description>
 					</parameter>
 				</group>
