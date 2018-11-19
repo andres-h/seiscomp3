@@ -159,7 +159,7 @@ class MNAmplitude : public Seiscomp::Processing::AmplitudeProcessor {
 		OPT(double) getDefinedOnset(const PhaseOrVelocity *,
 		                            double lat0, double lon0, double depth,
 		                            double lat1, double lon1, double dist,
-					    bool left) const;
+		                            bool left) const;
 
 		OPT(double) getEarliestOnset(double lat0, double lon0, double depth,
 		                             double lat1, double lon1, double dist) const;
