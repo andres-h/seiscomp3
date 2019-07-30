@@ -557,16 +557,17 @@ void Edata2Protocol::do_start()
         else
             gps.valid = false;
 
-        if(lastsecond >= 1546300800 && lastsecond <= 2147483647) // no WNRO
+        if(lastsecond >= 915148800 && lastsecond < 1546300800) // year 1999..2018 -> add 1024 weeks
+          {
+            set_time(lastsecond + 619315200);
+          }
+        else if(lastsecond >= 4070908800U) // year 2099+ (1963)
+          {
+            set_time(lastsecond - 2536444800U);
+          }
+        else // assuming no WNRO
           {
             set_time(lastsecond);
-          }
-        else if(gps.valid)
-          {
-            set_time_from_gps(gps);
-
-            if(gps.year >= 1999 && gps.year < 2019) // WNRO -> add 1024 weeks
-                digitime.it = add_time(digitime.it, 619315200, 0);
           }
 
         if(modseg->block_count == modseg->gps_block)

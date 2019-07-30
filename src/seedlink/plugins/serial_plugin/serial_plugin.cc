@@ -46,7 +46,7 @@
 #include "serial_plugin.h"
 #include "diag.h"
 
-#define MYVERSION "2.2 (2019.209)"
+#define MYVERSION "2.2 (2019.211)"
 
 #ifndef CONFIG_FILE
 #define CONFIG_FILE "/home/sysop/config/plugins.ini"
